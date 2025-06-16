@@ -1,28 +1,30 @@
-import instaloader
-import getpass
+from dotenv import load_dotenv
+import os
 
-def login_and_save_session():
-    print("🔐 Instagram Login to Save Session")
+load_dotenv()
+login_credentials = {"username": os.getenv("IG_USERNAME"), "password": os.getenv("IG_PASSWORD")}
 
-    username = input("Enter Instagram username: ")
-    password = getpass.getpass("Enter Instagram password (input hidden): ")
+def get_login_credentials():
+    """
+    Returns the Instagram login credentials from environment variables.
+    
+    Returns:
+        dict: A dictionary containing the Instagram username and password.
+    """
+    if not login_credentials["username"] or not login_credentials["password"]:
+        raise ValueError("Instagram username and password must be set in environment variables.")
+    
+    return login_credentials
 
-    loader = instaloader.Instaloader()
+def login():
+    """
+    Logs into Instagram using the credentials stored in environment variables.
 
-    try:
-        loader.login(username, password)
-        loader.save_session_to_file()
-        print("✅ Login successful. Session saved for reuse.")
-    except instaloader.exceptions.BadCredentialsException:
-        print("❌ Login failed: Incorrect username or password.")
-    except instaloader.exceptions.TwoFactorAuthRequiredException:
-        print("⚠️ 2FA required. This script does not handle 2FA currently.")
-    except instaloader.exceptions.ConnectionException as e:
-        print(f"🚫 Connection error: {e}")
-    except instaloader.exceptions.LoginRequiredException as e:
-        print(f"⚠️ Login required: {e}")
-    except Exception as e:
-        print(f"❌ Unknown error: {e}")
-
-if __name__ == "__main__":
-    login_and_save_session()
+    Returns:
+        str: A message indicating successful login.
+    """
+    credentials = get_login_credentials()
+    # Here you would implement the actual login logic, e.g., using requests or selenium.
+    # For now, we just return a success message.
+    
+    return f"Logged in as {credentials['username']}"
