@@ -1,0 +1,22 @@
+
+resource "mongodbatlas_advanced_cluster" "Cluster0" {
+  project_id   = "6577e80fabdc1124b0225c12"
+  name         = "Cluster0"
+  cluster_type = "REPLICASET"
+  replication_specs {
+    region_configs {
+      electable_specs {
+        instance_size = "M0"
+      }
+      provider_name         = "TENANT"
+      backing_provider_name = "AWS"
+      region_name           = "AP_SOUTH_1"
+      priority              = 7
+    }
+  }
+  termination_protection_enabled = false
+  tags {
+    key   = "application"
+    value = "0"
+  }
+}
