@@ -3,5 +3,7 @@ uvicorn
 pymongo
 python-dotenv
 playwright
-instaloader
 httpx
+openpyxl
+pandas
+python-multipart
