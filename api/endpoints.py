@@ -4,6 +4,7 @@ from database.mongo import creators_collection
 from scraper.worker import scrape_profile
 from datetime import datetime, timezone
 from typing import Optional, List
+from io import BytesIO
 import pandas as pd
 import traceback
 import logging
@@ -177,7 +178,9 @@ async def upload_excel(file: UploadFile = File(...)):
     if not file.filename.endswith((".xlsx", ".xls")):
         raise HTTPException(status_code=400, detail="Only Excel files are supported.")
 
-    df = pd.read_excel(file.file)
+    content = await file.read()
+
+    df = pd.read_excel(BytesIO(content), engine='openpyxl')
     df.columns = [col.strip().lower() for col in df.columns]
 
     required_columns = [
