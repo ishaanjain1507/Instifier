@@ -3,21 +3,24 @@ import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.endpoints import router as creators_router
+from api.auth import router as auth_router
 
 # ✅ Fix for Playwright subprocess issue on Windows
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 app = FastAPI()
+app.include_router(auth_router)
 
 # ✅ CORS fix for Swagger UI
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can restrict this in production
+    allow_origins=["*"],  # In prod, replace with your domain like ["https://instifier.in"]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Register API router
 app.include_router(creators_router, prefix="/creators", tags=["Creators"])

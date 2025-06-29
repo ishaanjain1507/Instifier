@@ -1,10 +1,12 @@
 from fastapi import APIRouter, HTTPException, Query, File, UploadFile
 from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from database.mongo import creators_collection
 from scraper.worker import scrape_profile
 from datetime import datetime, timezone
 from typing import Optional, List
 from io import BytesIO
+from bson import ObjectId
 import pandas as pd
 import traceback
 import logging
@@ -274,4 +276,27 @@ async def get_creator_profile(username: str):
                 "message": f"Internal server error while retrieving {username}",
                 "traceback": traceback.format_exc()
             }
+        )
+
+from bson import ObjectId
+
+@router.get("/all")  # becomes /creators/all via prefix
+async def get_all_creators():
+    try:
+        # Use async to_list to fetch all documents
+        docs = await creators_collection.find().to_list(length=None)
+        creators = []
+        for doc in docs:
+            doc.pop("_id", None)  # Remove ObjectId
+            creators.append(doc)
+        return creators
+    except Exception:
+        logger.exception("Error fetching all creators")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "status": "error",
+                "message": "Internal server error while fetching all creators",
+                "traceback": traceback.format_exc(),
+            },
         )
